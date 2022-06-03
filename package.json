@@ -1,0 +1,24 @@
+{
+  "name": "checkyourprojects",
+  "version": "1.0.0",
+  "description": "Check your Holberton projects",
+  "main": "index.js",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phwillot/checkYourProjects.git"
+  },
+  "keywords": [],
+  "author": "Philippe Willot",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phwillot/checkYourProjects/issues"
+  },
+  "homepage": "https://github.com/phwillot/checkYourProjects#readme",
+  "dependencies": {
+    "node-fetch": "^3.2.5"
+  },
+  "type": "module"
+}
