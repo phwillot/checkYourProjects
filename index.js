@@ -135,16 +135,15 @@ const checkProject = async projectId => {
   let difference = 0
   for (let i = 0; i < tasks.length; i++) {
     if (tasks[i].checker_available === false) {
-      console.log(`Task (${i} | ${tasks[i].title}) needs a manual review`)
+      console.log(`Task ${i} (${tasks[i].title}) needs a manual review`)
       difference++
       continue
     }
     if (resultTasks[i - difference]['result_display']['all_passed']) {
-      console.log(`Task ${i} passed successfully`)
+      console.log(`Task ${i} (${tasks[i].title}) passed successfully`)
     } else {
-      console.log(`Task ${i} has some failed checks`)
+      console.log(`Task ${i} (${tasks[i].title}) has some failed checks`)
     }
-    numTask++
   }
 }
 
