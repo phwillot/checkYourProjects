@@ -42,7 +42,8 @@ const checkValidProject = async (projectId, authToken) => {
       `https://intranet.hbtn.io/projects/${projectId}.json?auth_token=${authToken}`
     )
     if (response.status === 200) {
-      return response
+      const data = await response.json()
+      return data
     } else {
       console.log(
         "The project you request don't exist or your don't have access to it"
@@ -60,11 +61,9 @@ const addingNumberOnEachTask = tasks => {
 
 const checkProject = async projectId => {
   const authToken = await getAuthToken()
-  const response = await checkValidProject(projectId, authToken)
-  const projectData = await response.json()
-
-  const checkableTasks = addingNumberOnEachTask(projectData.tasks)
-  console.log(checkableTasks)
+  const projectData = await checkValidProject(projectId, authToken)
+  const tasks = addingNumberOnEachTask(projectData.tasks)
+  console.log(tasks)
 }
 
 /* Check if the program is correctly used before starting checking */
