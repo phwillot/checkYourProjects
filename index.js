@@ -1,11 +1,14 @@
 import fetch from 'node-fetch'
 
-let authToken = ''
+/* You have to export 2 variables in your environment or in ~/.bashrc file
+	API_KEY: Your Holberton API key
+	PASSWD: Your Holberton intranet password
+*/
 
 const informations = {
-  api_key: '',
-  email: '',
-  password: '',
+  api_key: process.env.API_KEY,
+  email: '3684@holbertonschool.com',
+  password: process.env.PASSWD,
   scope: 'checker',
 }
 
@@ -20,16 +23,54 @@ const getAuthToken = async () => {
       }
     )
     const data = await response.json()
-    return data.auth_token
-  } catch (e) {
-    console.log(e)
+    if (data.auth_token) {
+      return data.auth_token
+    } else {
+      console.log(
+        'Please check again your credentials, the auth_token was not created'
+      )
+      process.exit(1)
+    }
+  } catch (err) {
+    console.error(err)
   }
 }
 
-getAuthToken().then(token => {
-  authToken = token
-})
+const checkValidProject = async (projectId, authToken) => {
+  try {
+    const response = await fetch(
+      `https://intranet.hbtn.io/projects/${projectId}.json?auth_token=${authToken}`
+    )
+    if (response.status === 200) {
+      return response
+    } else {
+      console.log(
+        "The project you request don't exist or your don't have access to it"
+      )
+      process.exit(1)
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
 
-setTimeout(() => {
-  console.log(authToken)
-}, 1000)
+const addingNumberOnEachTask = tasks => {
+  return tasks.map((task, i) => ({ ...task, numTask: i }))
+}
+
+const checkProject = async projectId => {
+  const authToken = await getAuthToken()
+  const response = await checkValidProject(projectId, authToken)
+  const projectData = await response.json()
+
+  const checkableTasks = addingNumberOnEachTask(projectData.tasks)
+  console.log(checkableTasks)
+}
+
+/* Check if the program is correctly used before starting checking */
+if (process.argv.length !== 3) {
+  console.log('Usage: ./index.js <project_id>')
+} else {
+  const projectId = Number(process.argv[2])
+  checkProject(projectId)
+}
