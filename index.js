@@ -24,6 +24,7 @@ const getAuthToken = async () => {
     )
     const data = await response.json()
     if (data.auth_token) {
+      console.log('AuthToken correctly created')
       return data.auth_token
     } else {
       console.log(
@@ -43,6 +44,8 @@ const checkValidProject = async (projectId, authToken) => {
     )
     if (response.status === 200) {
       const data = await response.json()
+      console.log('You have access to this project')
+      console.log(`Checking all tasks of ${data.name}`)
       return data
     } else {
       console.log(
@@ -59,11 +62,79 @@ const addingNumberOnEachTask = tasks => {
   return tasks.map((task, i) => ({ ...task, numTask: i }))
 }
 
+const requestCorrection = async (tasks, authToken) => {
+  console.log('Requesting corrections...')
+  const correctionIds = []
+  try {
+    for (const task of tasks) {
+      if (task.checker_available === false) {
+        continue
+      }
+      const taskUrl = `https://intranet.hbtn.io/tasks/${task.id}/start_correction.json?auth_token=${authToken}`
+      const response = await fetch(taskUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(''),
+      })
+      const data = await response.json()
+      correctionIds.push(data.id)
+    }
+    return correctionIds
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const getResults = async (correctionIds, authToken) => {
+  const taskDatas = []
+  for (const id of correctionIds) {
+    const url = `https://intranet.hbtn.io/correction_requests/${id}.json?auth_token=${authToken}`
+    const task = await waitForDone(url)
+    taskDatas.push(task)
+  }
+  return taskDatas
+}
+
+const waitForDone = async url => {
+  let retries = 10
+  let timeout = 2000
+
+  try {
+    while (retries > 0) {
+      const response = await fetch(url)
+      const data = await response.json()
+      if (data.status === 'Done') {
+        return data
+      }
+      await wait(timeout)
+      retries--
+      timeout *= 1.5
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+function wait(ms) {
+  return new Promise(res => setTimeout(res, ms))
+}
+
 const checkProject = async projectId => {
   const authToken = await getAuthToken()
   const projectData = await checkValidProject(projectId, authToken)
   const tasks = addingNumberOnEachTask(projectData.tasks)
-  console.log(tasks)
+  const correctionIds = await requestCorrection(tasks, authToken)
+  const resultTasks = await getResults(correctionIds, authToken)
+
+  let numTask = 0
+  for (const task of resultTasks) {
+    if (task['result_display']['all_passed']) {
+      console.log(`Task ${numTask} passed successfully`)
+    } else {
+      console.log(`Task ${numTask} has some unchecked checks`)
+    }
+    numTask++
+  }
 }
 
 /* Check if the program is correctly used before starting checking */
