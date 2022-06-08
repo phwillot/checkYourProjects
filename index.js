@@ -77,6 +77,12 @@ const requestCorrection = async (tasks, authToken) => {
         body: JSON.stringify(''),
       })
       const data = await response.json()
+      if (data.error) {
+        console.log(
+          'Limit of request correction reached: max 30 per hour, please try later'
+        )
+        process.exit(1)
+      }
       correctionIds.push(data.id)
     }
     return correctionIds
@@ -126,12 +132,17 @@ const checkProject = async projectId => {
   const correctionIds = await requestCorrection(tasks, authToken)
   const resultTasks = await getResults(correctionIds, authToken)
 
-  let numTask = 0
-  for (const task of resultTasks) {
-    if (task['result_display']['all_passed']) {
-      console.log(`Task ${numTask} passed successfully`)
+  let difference = 0
+  for (let i = 0; i < tasks.length; i++) {
+    if (tasks[i].checker_available === false) {
+      console.log(`Task (${i} | ${tasks[i].title}) needs a manual review`)
+      difference++
+      continue
+    }
+    if (resultTasks[i - difference]['result_display']['all_passed']) {
+      console.log(`Task ${i} passed successfully`)
     } else {
-      console.log(`Task ${numTask} has some failed checks`)
+      console.log(`Task ${i} has some failed checks`)
     }
     numTask++
   }
