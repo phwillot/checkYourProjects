@@ -131,7 +131,7 @@ const checkProject = async projectId => {
     if (task['result_display']['all_passed']) {
       console.log(`Task ${numTask} passed successfully`)
     } else {
-      console.log(`Task ${numTask} has some unchecked checks`)
+      console.log(`Task ${numTask} has some failed checks`)
     }
     numTask++
   }
