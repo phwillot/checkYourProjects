@@ -149,7 +149,7 @@ const checkProject = async projectId => {
 
 /* Check if the program is correctly used before starting checking */
 if (process.argv.length !== 3) {
-  console.log('Usage: ./index.js <project_id>')
+  console.log('Usage: node index.js <project_id>')
 } else {
   const projectId = Number(process.argv[2])
   checkProject(projectId)
