@@ -143,7 +143,7 @@ const checkProject = async projectId => {
     if (resultTasks[i - difference]['result_display']['all_passed']) {
       console.log(`Task ${i} (${tasks[i].title}): `, chalk.green('OK'))
     } else {
-      console.log(`Task ${i} (${tasks[i].title}):`, chalk.red('FAILED'))
+      console.log(`Task ${i} (${tasks[i].title}): `, chalk.red('FAILED'))
     }
   }
 }
@@ -153,5 +153,9 @@ if (process.argv.length !== 3) {
   console.log('Usage: node index.js <project_id>')
 } else {
   const projectId = Number(process.argv[2])
-  checkProject(projectId)
+  if (isNaN(projectId)) {
+    console.log('Project ID must me a number')
+  } else {
+    checkProject(projectId)
+  }
 }
