@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import chalk from 'chalk'
 
 /* You have to export 2 variables in your environment or in ~/.bashrc file
 	API_KEY: Your Holberton API key
@@ -140,9 +141,9 @@ const checkProject = async projectId => {
       continue
     }
     if (resultTasks[i - difference]['result_display']['all_passed']) {
-      console.log(`Task ${i} (${tasks[i].title}) passed successfully`)
+      console.log(`Task ${i} (${tasks[i].title}): `, chalk.green('OK'))
     } else {
-      console.log(`Task ${i} (${tasks[i].title}) has some failed checks`)
+      console.log(`Task ${i} (${tasks[i].title}):`, chalk.red('FAILED'))
     }
   }
 }
