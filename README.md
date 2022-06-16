@@ -2,7 +2,7 @@
 
 ## Description
 
-At Holberton School, we have a checker who checks our code for the tasks's project.
+At Holberton School, we have a checker who checks our code for the project's tasks.
 
 It ensures that we have covered all cases and although edge cases. But you don't have a button to check every tasks. You have to do them one by one.
 
